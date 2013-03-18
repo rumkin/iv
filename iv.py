@@ -16,9 +16,31 @@
 #------------------------------------------------
 import sys
 import os
-from PyQt4 import QtCore, QtGui, uic
+import shutil
+from time import strftime, localtime
+from PyQt4 import QtCore, QtGui, Qt, uic
 
-Qt = QtCore.Qt
+# /home/YOURUSERFOLDER/.local/share/Trash/files/
+
+trashDir = os.getenv("HOME") + "/.local/share/Trash"
+
+def moveToTrash(filename):
+  if not os.path.exists(filename):
+    return
+
+  if not os.path.exists(trashDir):
+    return
+
+  trashInfo  = trashDir + "/info/" + os.path.basename(filename) + ".trashinfo"
+  trashFiles = trashDir + "/files"
+
+  with open(trashInfo, "w") as info:
+    content = '[Trash Info]\r\nPath=' + filename +'\r\nDeletetionDate=' + strftime("%Y-%m-%dT%H:%M:%S", localtime()) + '\r\n'
+    info.write(content)
+  info.closed
+
+  shutil.move(filename, trashFiles)
+
 
 class MainWindow(QtGui.QMainWindow):
   def __init__(self):
@@ -30,27 +52,28 @@ class MainWindow(QtGui.QMainWindow):
 
     self.actionNext.triggered.connect(self.nextImage)
     self.actionPrev.triggered.connect(self.prevImage)
+    self.actionRemove.triggered.connect(self.removeImage)
+    self.actionRefresh.triggered.connect(self.refresh)
 
     self.currentDir  = '.'
     self.currentFile = None
+    self.currentImageIndex = 0
     self.pixmap      = False
     self.needRedraw  = False
 
-
-  def changeDir(self):
-    dirname = os.path.dirname("%s" % QtGui.QFileDialog.getOpenFileName(self, 'Open file directory', self.dir))
-
-    if dirname :
-      self.currentDir = dirname
-
   def openImageFile(self):
-    imagePath = "%s" % QtGui.QFileDialog.getOpenFileName(self, 'Open image', self.currentDir, "Images (*.png *.jpeg *.jpg)")
+
+    dialog = QtGui.QFileDialog()
+    dialog.setFileMode(QtGui.QFileDialog.AnyFile)
+
+    imagePath = unicode(dialog.getOpenFileName(self, 'Open image', self.currentDir, "Images (*.png *.jpeg *.jpg)"))
 
     if not imagePath:
       return
 
     self.setCurrentDir(os.path.dirname(imagePath))
-    self.showImageFile(imagePath)
+    index = self.images.index(imagePath)
+    self.showImageAt(index)
 
   def setCurrentDir(self, dir):
     if self.currentDir == dir:
@@ -81,7 +104,12 @@ class MainWindow(QtGui.QMainWindow):
     return images
 
   def showImageFile(self, path):
-    index = self.images.index(path) + 1
+    images = self.images
+
+    if (not path in images):
+      return
+
+    index  = self.images.index(path) + 1
     length = len(self.images)
     self.setWindowTitle("%s - %d/%d" % (os.path.basename(path), index, length))
     self.currentFile = path
@@ -105,7 +133,7 @@ class MainWindow(QtGui.QMainWindow):
     if size.width() > self.pixmap.width() and size.height() > self.pixmap.height():
       pixmap = self.pixmap
     else:
-      pixmap = self.pixmap.scaled(size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+      pixmap = self.pixmap.scaled(size, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
 
     # ambilight = pixmap.transformed(QtGui.QTransformation(), Qt.SmoothTransformation)
     scene  =  QtGui.QGraphicsScene()
@@ -113,6 +141,35 @@ class MainWindow(QtGui.QMainWindow):
     self.imageView.setScene(scene)
 
     self.needRedraw = False
+
+  def clearImageView(self):
+    scene = QtGui.QGraphicsScene()
+    self.imageView.setScene(scene)
+    self.needRedraw = False
+
+  def fileNotFoundDisplay(self, filepath):
+    self.setWindowTitle("Not found: %s - %d/%d" % (os.path.basename(filepath), self.currentImageIndex + 1, len(self.images)))
+    self.clearImageView()
+
+  def showImageAt(self, index) :
+
+    if (index >= len(self.images)):
+      index = len(self.images) -1
+    elif (index < 0):
+      index = 0
+
+    filepath = self.images[index]
+    if (self.currentFile == filepath):
+      return
+    self.currentFile       = filepath
+    self.currentImageIndex = index
+
+    if not os.path.exists(filepath):
+      self.actionRemove.setEnabled(False)
+      self.fileNotFoundDisplay(filepath)
+    else :
+      self.actionRemove.setEnabled(True)
+      self.showImageFile(filepath)
 
   def nextImage(self):
     currentFile = self.currentFile
@@ -125,7 +182,7 @@ class MainWindow(QtGui.QMainWindow):
 
     index += 1
 
-    self.showImageFile(self.images[index])
+    self.showImageAt(index)
 
   def prevImage(self):
     currentFile = self.currentFile
@@ -138,7 +195,25 @@ class MainWindow(QtGui.QMainWindow):
 
     index -= 1
 
-    self.showImageFile(self.images[index])
+    self.showImageAt(index)
+
+  def refresh(self):
+    dir = self.currentDir
+    filename = self.currentFile
+    index    = self.currentImageIndex
+    images   = self.getImagesFromDir(dir)
+
+    self.images = images
+    imagesLength = len(images)
+
+    if (filename in images):
+      self.showImageFile(filename)
+    elif (len(images) > index):
+      self.showImageAt(index)
+    elif (index > imagesLength and imagesLength > 0):
+      self.showImageAt(imagesLength - 1)
+    else :
+      self.showImageAt(0)
 
   def setWindowTitle(self, title = None):
     if title :
@@ -147,7 +222,23 @@ class MainWindow(QtGui.QMainWindow):
       title = "iv"
 
     QtGui.QMainWindow.setWindowTitle(self, title)
-   
+
+  def removeImage(self):
+    result = Qt.QMessageBox(Qt.QMessageBox.Warning, "Move to Trash",
+       "Are you sure to move this file to trash?",
+       Qt.QMessageBox.Ok|Qt.QMessageBox.Cancel,
+       self).exec_()
+
+    if (result != Qt.QMessageBox.Ok) :
+      return
+
+    # Remove image
+    moveToTrash(self.currentFile)
+    self.refresh()
+
+
+
+
 app = QtGui.QApplication(sys.argv)
 w = MainWindow()
 w.show()
