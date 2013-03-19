@@ -61,6 +61,23 @@ class MainWindow(QtGui.QMainWindow):
     self.pixmap      = False
     self.needRedraw  = False
 
+    self.loadPlugins()
+
+  def loadPlugins(self):
+    # TODO Specify directory
+
+    pluginDir = "plugins"
+    
+    files = os.listdir(pluginDir)
+    for file in files:
+      pluginPath = pluginDir + "/" + file + "/" + file
+      
+      if os.path.exists(pluginPath + ".py"):
+        sys.path.append(pluginDir + "/" + file + "/")
+        plugin = __import__(file)
+        getattr(plugin, file)(self)
+
+
   def openImageFile(self):
 
     dialog = QtGui.QFileDialog()
