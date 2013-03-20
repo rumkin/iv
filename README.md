@@ -1,7 +1,7 @@
 iv
 ==
 
-iv is a sublime text but for image viewing and organizing
+iv is a sublime text for image viewing and organizing
 
 
 TODO
