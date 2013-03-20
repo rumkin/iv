@@ -5,11 +5,11 @@
 
 '''
   TODOLIST
-  - Removing
-  - Renaming
-  - Drag'n'drop to folder
-  - Removing unexistant files from roll
-  - Selecting (flagging) images
+  . Removing
+  . Renaming
+  . Drag'n'drop to folder
+  + Removing unexistant files from roll
+  . Selecting (flagging) images
   =
 '''
 
@@ -17,6 +17,8 @@
 import sys
 import os
 import shutil
+import json
+import re
 from time import strftime, localtime
 from PyQt4 import QtCore, QtGui, Qt, uic
 
@@ -61,22 +63,61 @@ class MainWindow(QtGui.QMainWindow):
     self.pixmap      = False
     self.needRedraw  = False
 
+
     self.loadPlugins()
 
   def loadPlugins(self):
     # TODO Specify directory
 
-    pluginDir = "plugins"
+    pluginDir = "packages"
     
+    if not os.path.exists(pluginDir): 
+      return
+
     files = os.listdir(pluginDir)
-    for file in files:
-      pluginPath = pluginDir + "/" + file + "/" + file
+    for name in files:
+      pluginPath = pluginDir + "/" + name + "/" + name
       
       if os.path.exists(pluginPath + ".py"):
-        sys.path.append(pluginDir + "/" + file + "/")
-        plugin = __import__(file)
-        getattr(plugin, file)(self)
+        sysPathLen = len(sys.path)
 
+        sys.path.append(pluginDir + "/" + name + "/")
+        module = __import__(name)
+
+        #restore system path
+        sys.path = sys.path[0:sysPathLen - 1]
+
+        config = self.getPluginConfig(name)
+
+        #initialize plugin
+        getattr(module, name)(self, config)
+
+  def iv_dirs(self):
+    dirs = []
+    # User
+    dirs.append(os.getenv("HOME") + "/.config/iv/")
+    # OS
+    dirs.append("/usr/local/iv/")
+    # installation
+    dirs.append(os.path.dirname(__file__) + "/")
+
+    return dirs
+
+  def getPluginConfig(self, name):
+    configPath = os.path.dirname(__file__) + "/packages/" + name + "/" + name + ".json"
+
+    if not os.path.exists(configPath): return dict()
+
+    config = ""
+    with open(configPath, "r") as f:
+      for line in f:
+        if not re.match("^\s*//", line):
+          config = config + line
+    f.closed
+
+    config = json.loads(config)
+
+    return config
 
   def openImageFile(self):
 
