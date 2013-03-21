@@ -13,13 +13,13 @@ TODO
 * **GalleryView**: show full size images from defined list
 * **Navigation panel**: fast directory navigation with breadcrumbs widget
 * **ToolBar panel**: panel with tool button and panels
-* **Plugins**: rename, move to trash, zoom, flagging
 
 Packages todo
 ====
 
 * Drag'n'drop
 * Delete
+* Zoom
 * Refresh
 * Rename
 * File info
