@@ -22,6 +22,7 @@ from PyQt4 import QtCore, QtGui, Qt, uic
 class MainWindow(QtGui.QMainWindow):
   def __init__(self):
     QtGui.QMainWindow.__init__(self)
+
     uic.loadUi('iv.ui', self)
     self.setWindowTitle()
 
@@ -107,6 +108,9 @@ class MainWindow(QtGui.QMainWindow):
     try:
       rect   = self.imageView.rect()
       pixmap = QtGui.QPixmap(path)
+      
+      self.imageView.setToolTip(u"<b>%s</b> %s×%s" % (unicode(os.path.basename(path)), pixmap.width(), pixmap.height()))
+
       if pixmap.width() > rect.width() or pixmap.height() > rect.height():
         pixmap = pixmap.scaled(rect.width(), rect.height(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
 
