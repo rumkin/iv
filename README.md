@@ -9,7 +9,7 @@ TODOs
 
 ## v 0.2
 * ~~**Refactoring**: beautify & simplify code~~
-* **Package API**: add events
+* **Package API**: events
 * **Important packages**: drag'n'drop, zoom
 
 ## v 0.3
