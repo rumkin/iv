@@ -1,5 +1,6 @@
 # /home/YOURUSERFOLDER/.local/share/Trash/files/
 
+import os
 from time import strftime, localtime
 import shutil
 trashDir = os.getenv("HOME") + "/.local/share/Trash"

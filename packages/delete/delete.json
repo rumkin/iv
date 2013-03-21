@@ -1,5 +1,4 @@
 {
-	"option"  : "value",
 	// Comment is there
-	"message" : "Hi there"
+	"message" : "Delete package config file message"
 }
