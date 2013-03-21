@@ -14,8 +14,14 @@ TODO
 * **Navigation panel**: fast directory navigation with breadcrumbs widget
 * **ToolBar panel**: panel with tool button and panels
 
+v 0.3
+==
+
+Add iv settings and key bindings configs to `~/.config/iv/`
+
+
 Packages todo
-====
+===
 
 * Drag'n'drop
 * Delete
