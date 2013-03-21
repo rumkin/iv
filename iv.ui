@@ -72,7 +72,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionRemove"/>
@@ -93,7 +93,7 @@
   </widget>
   <action name="actionOpen">
    <property name="text">
-    <string>Open...</string>
+    <string>&amp;Open...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -106,7 +106,7 @@
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -114,7 +114,7 @@
   </action>
   <action name="actionNext">
    <property name="text">
-    <string>Next</string>
+    <string>&amp;Next</string>
    </property>
    <property name="shortcut">
     <string>Right</string>
@@ -122,7 +122,7 @@
   </action>
   <action name="actionPrev">
    <property name="text">
-    <string>Prev</string>
+    <string>&amp;Prev</string>
    </property>
    <property name="shortcut">
     <string>Left</string>
@@ -130,7 +130,7 @@
   </action>
   <action name="actionRefresh">
    <property name="text">
-    <string>Refresh</string>
+    <string>&amp;Refresh</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -141,7 +141,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Remove...</string>
+    <string>&amp;Remove...</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
