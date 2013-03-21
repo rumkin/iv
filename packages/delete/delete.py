@@ -24,5 +24,8 @@ def moveToTrash(filename):
 
 
 class delete:
-	def __init__(self, iv, config):
-		print config['message']
+  def __init__(self, iv, config):
+  	print config['message']
+
+  def close(self):
+    print "Delete is closed"

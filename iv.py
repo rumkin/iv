@@ -190,7 +190,8 @@ class MainWindow(QtGui.QMainWindow):
       # initialize package
       instance = getattr(module, package)(self, config)
       packages[package] = instance
-      print "Package %s" % (package)
+    
+    self.packages = packages
 
   # Load currently found package's config json file
   def get_package_config(self, package):
@@ -228,6 +229,13 @@ class MainWindow(QtGui.QMainWindow):
       title = "iv"
 
     return QtGui.QMainWindow.setWindowTitle(self, title)
+
+  def close(self):
+    for package in self.packages:
+      instance = self.packages[package]
+      if hasattr(instance, 'close'): instance.close()
+
+    return QtGui.QMainWindow.close(self)
 
 
 
