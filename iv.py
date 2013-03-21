@@ -5,10 +5,9 @@
 
 '''
   TODOLIST
-  . Removing
+  . Drag'n'drop to/from folder
+  . Removing files
   . Renaming
-  . Drag'n'drop to folder
-  + Removing unexistant files from roll
   . Selecting (flagging) images
   =
 '''
@@ -29,8 +28,8 @@ class MainWindow(QtGui.QMainWindow):
     self.actionOpen.triggered.connect(self.open_file)
     self.actionNext.triggered.connect(self.next_image)
     self.actionPrev.triggered.connect(self.prev_image)
-    # TODO move to "refresh" package
-    self.actionRefresh.triggered.connect(self.refresh)
+
+    self.actionRemove.setEnabled(True)
     
     self.current_dir = '.'
     self.extensions = ['jpg', 'jpeg', 'png']
@@ -66,6 +65,9 @@ class MainWindow(QtGui.QMainWindow):
     # print "Length %s" % roll.length
 
   def show_dir(self, dir):
+
+    if not os.path.isdir(dir): raise Exception("Path '%s' is not a dir" % dir)
+
     self.current_dir = dir
 
     images = self.get_images_from_dir(self.current_dir)
@@ -117,9 +119,6 @@ class MainWindow(QtGui.QMainWindow):
   def clear_view(self):
     scene = QtGui.QGraphicsScene()
     self.imageView.setScene(scene)
-  
-  def refresh(self):
-    self.show_dir(self.current_dir)
 
   def get_images_from_dir(self, dirname):
 
