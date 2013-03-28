@@ -9,8 +9,8 @@ TODOs
 
 ## v 0.2
 * ~~**Refactoring**: beautify & simplify code~~
-* **Package API**: events
-* **Important packages**: drag'n'drop, zoom
+* ~~**Package API**: events~~
+* **Important packages**: drag'n'drop, ~~zoom~~
 * **UI Elements**: buttons, panels, toolbars, scollbars, etc
 
 ## v 0.3
