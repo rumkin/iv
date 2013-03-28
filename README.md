@@ -51,3 +51,5 @@ Packages list
 * Image info (exif)
 * Histograma
 * Select/Flag
+* Hand (Move) tool, selection tool
+* Crop/resize
