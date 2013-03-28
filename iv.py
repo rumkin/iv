@@ -34,9 +34,11 @@ class MainWindow(QtGui.QMainWindow):
     self.current_dir = '.'
     self.extensions = ['jpg', 'jpeg', 'png']
     self.photo_roll = photoRoll([])
+    self.events = {}
 
     self.init_packages()
 
+    self.trigger("initiated")
     # Pre log
     # print "Current dir: %s" % self.current_dir
 
@@ -208,7 +210,39 @@ class MainWindow(QtGui.QMainWindow):
 
     return json.loads(config)
 
+  #----------------------------------------------------------------------------
+  # Events
+  #----------------------------------------------------------------------------
 
+  def on(self, event, callback):
+    events = self.events
+    if event not in self.events:
+      events[event] = []
+
+    events[event].append(callback)
+
+  def off(self, event, callback = None):
+    events = self.events
+    if event not in events:
+      return
+
+    if not callback:
+      events[event] = []
+      return
+
+    events[event].remove(callback)
+
+  def trigger (self, event, data = None):
+    events = self.events
+    if event not in events:
+      return
+    if data == None:
+      data = {}
+
+    data['target'] = self
+    
+    for callback in events[event]:
+      callback(Event(event, data))
 
   #----------------------------------------------------------------------------
   # QtGui.QWindow functions overloading
@@ -291,6 +325,42 @@ class photoRoll:
     if not self.has(filename): raise Exception("File not in roll")
 
     self._current = self.images.index(filename)
+
+
+class Event(object):
+  # Event data
+  params = {}
+  # Event type
+  type = ""
+  # freezed
+  immutable = False
+
+  def __init__(self, type, data = None):
+
+    # setattr(self, "immutable", True)
+    # print self.params
+    object.__setattr__(self, "type", type)
+    object.__setattr__(self, "immutable", True)
+
+    if data:
+      for key in data:
+        self.params[key] = data[key]
+
+
+
+  def __setattr__(self, key, value):
+    if (self.immutable == True and key in self.params):
+      raise Exception("Event object is immutable")
+
+    self.params[key] = value
+
+  def __getattr__(self, key):
+    return self.params[key]
+
+  def __delattr__(self, key):
+    self.params.remove(key)
+
+
 
 app = QtGui.QApplication(sys.argv)
 w = MainWindow()
