@@ -51,5 +51,8 @@ Packages list
 * Image info (exif)
 * Histograma
 * Select/Flag
-* Hand (Move) tool, selection tool
+* Hand (Move) tool
+* Region selection tool
 * Crop/resize
+* Flip and rotate
+* View modes: full size, etc
