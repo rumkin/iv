@@ -9,7 +9,7 @@ TODOs
 
 ## v 0.2
 * ~~**Refactoring**: beautify & simplify code~~
-* **Package API**: events
+* ~~**Package API**: events~~
 * **Important packages**: drag'n'drop, zoom
 * **UI Elements**: buttons, panels, toolbars, scollbars, etc
 
@@ -51,3 +51,8 @@ Packages list
 * Image info (exif)
 * Histograma
 * Select/Flag
+* Hand (Move) tool
+* Region selection tool
+* Crop/resize
+* Flip and rotate
+* View modes: full size, etc
