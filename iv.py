@@ -116,11 +116,22 @@ class MainWindow(QtGui.QMainWindow):
       if pixmap.width() > rect.width() or pixmap.height() > rect.height():
         pixmap = pixmap.scaled(rect.width(), rect.height(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
 
+      self.current_pixmap = pixmap
       scene.addPixmap(pixmap)
     except Exception, e:
       raise e
     finally:
       self.imageView.setScene(scene)
+
+    self.trigger("image.changed", {
+      "new_image" : path
+    })
+
+  def show_pixmap(self, pixmap):
+    scene = QtGui.QGraphicsScene()
+    scene.addPixmap(pixmap)
+    self.imageView.setScene(scene)
+    self.trigger("view.redraw")
 
   def clear_view(self):
     scene = QtGui.QGraphicsScene()
@@ -332,34 +343,31 @@ class photoRoll:
 
 
 class Event(object):
-  # Event data
-  params = {}
   # Event type
   type = ""
-  # freezed
-  immutable = False
 
+  # Event data
+  params = {}
+
+  # Initialize
   def __init__(self, type, data = None):
 
-    # setattr(self, "immutable", True)
-    # print self.params
     object.__setattr__(self, "type", type)
-    object.__setattr__(self, "immutable", True)
 
     if data:
       for key in data:
         self.params[key] = data[key]
 
-
-
   def __setattr__(self, key, value):
-    if (self.immutable == True and key in self.params):
-      raise Exception("Event object is immutable")
+    if key in self.params:
+      raise Exception("Event already contains param '" + key + "'")
 
     self.params[key] = value
 
+
   def __getattr__(self, key):
     return self.params[key]
+
 
   def __delattr__(self, key):
     self.params.remove(key)
