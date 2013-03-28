@@ -50,4 +50,5 @@ class widget() :
   def __init__(self, iv, config):
     button = Button()
     button.clicked.connect(button.toggleDraw)
-    iv.verticalLayout.addWidget(button)
+    
+    # iv.verticalLayout.addWidget(button)
