@@ -203,6 +203,9 @@ class MainWindow(QtGui.QMainWindow):
 
       # TODO remove path from sys.path (?)
       config = self.get_package_config(package)
+      if 'enabled' in config and not config['enabled']:
+        continue
+
       # initialize package
       instance = getattr(module, package)(self, config)
       packages[package] = instance

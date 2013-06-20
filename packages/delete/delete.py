@@ -28,9 +28,6 @@ def moveToTrash(filename):
 class delete:
   def __init__(self, iv, config):
     self.iv = iv
-    print "Config is loaded:"
-    print config['message']
-
     iv.actionRemove.triggered.connect(self.delete_file)
 
   def delete_file(self):
