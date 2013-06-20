@@ -1,6 +1,8 @@
 language : python
 python   : 
   - '2.7'
-  - '3.2'
+nvm:
+  - '0.8'
+  - '0.10'
 script:
   - bash tests/simple.sh

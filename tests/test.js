@@ -1,1 +1,1 @@
-console.log('Node works fine');
+console.log('Node works fine. Node version %s', process.version);
